@@ -9,7 +9,7 @@
 # 
 # Don't forget to start by importing any libraries you need.
 
-# In[10]:
+# In[2]:
 
 
 # import your libraries here
@@ -190,23 +190,71 @@ plt.show()
 # 
 # Hint: if you attempt to call a function from a library or package that hasn't been imported, you will get an error.
 
-# In[ ]:
+# In[5]:
+
+
+from scipy.stats import norm
+
+
+# In[6]:
 
 
 # your solution here
+gauss_data = np.loadtxt('histogram_exercise.dat')
+
+
+# In[8]:
+
+
+mu, sigma = norm.fit(gauss_data)
+
+x = np.linspace(np.min(gauss_data), np.max(gauss_data), 1000)
+
+gauss = norm.pdf(x, mu, sigma)
+
+
+# In[21]:
+
+
+plt.figure(figsize =(12, 12))
+plt.title('Gauss and Gaussian Fit')
+plt.plot(x, gauss, 'k', linewidth = 2, label= 'Gauss Fit')
+plt.hist(gauss_data, color= 'yellow', normed=True, hatch='//', label='Gaussian Data')
+plt.legend(loc='best')
+plt.show()
 
 
 # #### Exercise 2
 # 
 # Create a 1D interpolation along these arrays. Plot both the data (as points) and the interpolation (as a dotted line). Also plot the value of the interpolated function at x=325. What does the function look like to you?
 
-# In[ ]:
+# In[22]:
+
+
+from scipy.interpolate import interp1d
+
+
+# In[24]:
 
 
 x = np.array([0., 50., 100., 150., 200., 250., 300., 350., 400., 450., 500])
 y = np.array([0., 7.071, 10., 12.247, 14.142, 15.811, 17.321, 18.708, 20., 21.213, 22.361])
 
 # solution here
+
+f = interp1d(x, y)
+
+
+# In[34]:
+
+
+xnew = np.linspace(0, 500, 1000)
+plt.figure(figsize = (10,10))
+plt.plot(x, y, 'ko', label = 'Data')
+plt.plot(xnew, f(xnew), 'r--', label = 'Interpolation')
+plt.plot(325, f(325), 'b*', label = 'x = 325', markersize = 15)
+plt.legend(loc = 'best', frameon=False)
+plt.show()
 
 
 # ### Day 4
