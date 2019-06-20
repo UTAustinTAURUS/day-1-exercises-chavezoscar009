@@ -257,6 +257,16 @@ plt.legend(loc = 'best', frameon=False)
 plt.show()
 
 
+# In[1]:
+
+
+from astropy import constants as const
+import numpy as np
+import matplotlib.pyplot as plt
+from astropy.io import fits
+import aplpy
+
+
 # ### Day 4
 # 
 # #### Exercise 1
@@ -271,10 +281,46 @@ plt.show()
 #     
 # B. Plot your function in log-log space for T = 25, 50, and 300 K. The most sensible frequency range is about 10^5 to 10^15 Hz. Hint: if your units are correct, your peak values of B(T) should be on the order of 10^-10. Make sure everything is labelled. 
 
-# In[ ]:
+# In[4]:
 
+
+h = const.h.cgs
+k = const.k_B.cgs
+c = const.c.cgs.value
+print(h)
+print(k)
+print(c)
+
+
+# In[8]:
+
+
+h = const.h.cgs.value
+k = const.k_B.cgs.value
+c = const.c.cgs.value
 
 # solution here
+def blackbody(nu, T):
+    
+    
+    numerator = (2 * h * nu**3)/c**2
+    denom = np.exp((h * nu)/(k * T)) - 1
+    
+    return numerator/denom
+
+nu = np.linspace(1e5, 1e15, 1e5)
+T = [25, 50, 300]
+
+plt.figure(figsize = (10,10))
+plt.xlabel('Frequency [Hz]', fontsize = 16)
+plt.ylabel('Specific Intensity', fontsize = 16)
+plt.title('Planck Distribution', fontsize = 16)
+
+for i in T:
+    plt.loglog(nu, blackbody(nu, i), label = str(i) + ' K')
+
+plt.legend(loc='best', fontsize = 14, frameon=False)
+plt.show()    
 
 
 # #### Exercise 2
@@ -289,8 +335,49 @@ plt.show()
 # 
 # C. Plot the X-ray data as contours above the optical image. Make the contours spring green with 80% opacity and dotted lines. Make the levels go from 2$\sigma$ to 10$\sigma$ in steps of 2$\sigma$. (It might be easier to define the levels array before show_contours, and set levels=levels.)
 
-# In[ ]:
+# In[20]:
 
 
 # solution here
+data = fits.getdata('m51_xray.fits')
+
+flat_data = data.flatten()
+
+sigma = np.std(flat_data)
+
+
+# In[35]:
+
+
+galaxy = aplpy.FITSFigure('m51_optical_B.fits')
+galaxy.show_colorscale(cmap='cubehelix')
+galaxy.show_colorbar()
+
+plt.show()
+
+
+# In[21]:
+
+
+2*sigma
+
+
+# In[29]:
+
+
+levels = np.linspace(2*sigma, 10*sigma, num = 5)
+levels[1]-levels[0]
+
+
+# In[36]:
+
+
+levels = np.linspace(2*sigma, 10*sigma, num = ((8*sigma)/(2*sigma)))
+
+galaxy = aplpy.FITSFigure('m51_optical_B.fits')
+galaxy.show_colorscale(cmap='cubehelix')
+galaxy.show_contour('m51_xray.fits', linestyle= 'dotted', colors = 'springgreen', alpha = .8, levels = levels)
+#galaxy.show_colorbar()
+
+plt.show()
 
